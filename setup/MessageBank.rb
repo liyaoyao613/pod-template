@@ -39,7 +39,7 @@ module Pod
       puts "To get you started we need to ask a few questions, this should only take a minute."
       puts ""
 
-      has_run_before = `defaults read org.cocoapods.pod-template HasRunBefore`.chomp == "1"
+      has_run_before = `defaults read esbuilder.mp.pod-template HasRunBefore`.chomp == "1"
 
       puts "If this is your first time we recommend running through with the guide: "
       puts " - "  + "https://guides.cocoapods.org/making/using-pod-lib-create.html".blue.underlined
@@ -52,7 +52,7 @@ module Pod
 
       unless has_run_before
         puts "\n Press return to continue."
-        `defaults write org.cocoapods.pod-template HasRunBefore -bool true`
+        `defaults write esbuilder.mp.pod-template HasRunBefore -bool true`
       end
 
       puts ""
@@ -64,7 +64,13 @@ module Pod
       puts " Ace! you're ready to go!"
       puts " We will start you off by opening your project in Xcode"
       pod_name = @configurator.pod_name
-      run_command "open 'Example/#{pod_name}.xcworkspace'", "open '#{pod_name}/Example/#{pod_name}.xcworkspace'"
+
+      project_folder_name = "Example"
+      if pod_name.include?"EsbuilderMp"
+        project_folder_name = pod_name.tr("EsbuilderMp", "") + "Project"
+      end
+
+      run_command "open '#{project_folder_name}/#{pod_name}.xcworkspace'", "open '#{pod_name}/#{project_folder_name}/#{pod_name}.xcworkspace'"
     end
 
 

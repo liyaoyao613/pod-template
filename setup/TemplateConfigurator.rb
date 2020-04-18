@@ -70,22 +70,32 @@ module Pod
     def run
       @message_bank.welcome_message
 
-      platform = self.ask_with_answers("What platform do you want to use?", ["iOS", "macOS"]).to_sym
+      framework = self.ask_with_answers("What language do you want to use?", ["Swift", "ObjC"]).to_sym
+        case framework
+          when :swift
+            ConfigureSwift.perform(configurator: self)
 
-      case platform
-        when :macos
-          ConfigureMacOSSwift.perform(configurator: self)
-        when :ios
-          framework = self.ask_with_answers("What language do you want to use?", ["Swift", "ObjC"]).to_sym
-          case framework
-            when :swift
-              ConfigureSwift.perform(configurator: self)
+          when :objc
+            ConfigureIOS.perform(configurator: self)
+        end
 
-            when :objc
-              ConfigureIOS.perform(configurator: self)
-          end
-      end
+      # platform = self.ask_with_answers("What platform do you want to use?", ["iOS", "macOS"]).to_sym
 
+      # case platform
+      #   when :macos
+      #     ConfigureMacOSSwift.perform(configurator: self)
+      #   when :ios
+      #     framework = self.ask_with_answers("What language do you want to use?", ["Swift", "ObjC"]).to_sym
+      #     case framework
+      #       when :swift
+      #         ConfigureSwift.perform(configurator: self)
+
+      #       when :objc
+      #         ConfigureIOS.perform(configurator: self)
+      #     end
+      # end
+
+      rename_project_folder_name
       replace_variables_in_files
       clean_template_files
       rename_template_files
@@ -94,6 +104,7 @@ module Pod
       rename_classes_folder
       ensure_carthage_compatibility
       reinitialize_git_repo
+      rename_example_folder
       run_pod_install
 
       @message_bank.farewell_message
@@ -105,25 +116,39 @@ module Pod
       FileUtils.ln_s('Example/Pods/Pods.xcodeproj', '_Pods.xcodeproj')
     end
 
+    def rename_project_folder_name
+      @project_folder_name = "Example"
+      if @pod_name.include?"EsbuilderMp"
+        @project_folder_name = @pod_name.tr("EsbuilderMp", "") + "Project"
+      end
+      puts "rename project folder name : " + @project_folder_name
+    end
+
+    def rename_example_folder
+      FileUtils.mv "Example", @project_folder_name
+      `rm LICENSE`
+    end
+
     def run_pod_install
       puts "\nRunning " + "pod install".magenta + " on your new library."
       puts ""
 
-      Dir.chdir("Example") do
+      Dir.chdir(@project_folder_name) do
         system "pod install"
       end
 
-      `git add Example/#{pod_name}.xcodeproj/project.pbxproj`
+      `git add #{@project_folder_name}/#{pod_name}.xcodeproj/project.pbxproj`
       `git commit -m "Initial commit"`
     end
 
     def clean_template_files
-      ["./**/.gitkeep", "configure", "_CONFIGURE.rb", "README.md", "LICENSE", "templates", "setup", "CODE_OF_CONDUCT.md"].each do |asset|
+      ["./**/.gitkeep", "configure", "_CONFIGURE.rb", "README.md", "LICENSE","templates", "setup", "CODE_OF_CONDUCT.md"].each do |asset|
         `rm -rf #{asset}`
       end
     end
 
     def replace_variables_in_files
+ 
       file_names = ['POD_LICENSE', 'POD_README.md', 'NAME.podspec', '.travis.yml', podfile_path]
       file_names.each do |file_name|
         text = File.read(file_name)
@@ -133,6 +158,8 @@ module Pod
         text.gsub!("${USER_EMAIL}", user_email)
         text.gsub!("${YEAR}", year)
         text.gsub!("${DATE}", date)
+        text.gsub!("${PROJECT_FOLDEER_NAME}", @project_folder_name)
+        
         File.open(file_name, "w") { |file| file.puts text }
       end
     end

@@ -22,21 +22,26 @@ TODO: Add long description of the pod here.
                        DESC
 
   s.homepage         = 'https://github.com/${USER_NAME}/${POD_NAME}'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { '${USER_NAME}' => '${USER_EMAIL}' }
   s.source           = { :git => 'https://github.com/${USER_NAME}/${POD_NAME}.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
+  s.platform     = :ios, "8.0"
+  s.static_framework = true
+  s.pod_target_xcconfig = {
+      'DEAD_CODE_STRIPPING' => 'NO',
+      'LINK_WITH_STANDARD_LIBRARIES' => 'NO',
+      'OTHER_LDFLAGS' => '-lObjC'
+  }
 
-  s.source_files = '${POD_NAME}/Classes/**/*'
+  s.source_files = '${POD_NAME}/Classes/**/*.{h,m,mm}'
+  s.public_header_files = '${POD_NAME}/Classes/Public/**/*.h'
   
   # s.resource_bundles = {
   #   '${POD_NAME}' => ['${POD_NAME}/Assets/*.png']
   # }
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
+  # s.libraries = "c++"
   # s.dependency 'AFNetworking', '~> 2.3'
 end
