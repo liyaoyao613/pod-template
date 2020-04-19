@@ -121,12 +121,10 @@ module Pod
       if @pod_name.include?"EsbuilderMp"
         @project_folder_name = @pod_name.tr("EsbuilderMp", "") + "Project"
       end
-      puts "rename project folder name : " + @project_folder_name
     end
 
     def rename_example_folder
       FileUtils.mv "Example", @project_folder_name
-      `rm LICENSE`
     end
 
     def run_pod_install
@@ -142,14 +140,13 @@ module Pod
     end
 
     def clean_template_files
-      ["./**/.gitkeep", "configure", "_CONFIGURE.rb", "README.md", "LICENSE","templates", "setup", "CODE_OF_CONDUCT.md"].each do |asset|
+      ["./**/.gitkeep", "configure", "_CONFIGURE.rb", "README.md", "templates", "setup", "CODE_OF_CONDUCT.md"].each do |asset|
         `rm -rf #{asset}`
       end
     end
 
     def replace_variables_in_files
- 
-      file_names = ['POD_LICENSE', 'POD_README.md', 'NAME.podspec', '.travis.yml', podfile_path]
+      file_names = ['POD_README.md', 'ReleaseNotes.txt', 'NAME.podspec', '.travis.yml', podfile_path]
       file_names.each do |file_name|
         text = File.read(file_name)
         text.gsub!("${POD_NAME}", @pod_name)
@@ -158,6 +155,8 @@ module Pod
         text.gsub!("${USER_EMAIL}", user_email)
         text.gsub!("${YEAR}", year)
         text.gsub!("${DATE}", date)
+        text.gsub!("${DATE_HORIZONTAL}", date_horizontal)
+        
         text.gsub!("${PROJECT_FOLDEER_NAME}", @project_folder_name)
         
         File.open(file_name, "w") { |file| file.puts text }
@@ -200,7 +199,6 @@ module Pod
 
     def rename_template_files
       FileUtils.mv "POD_README.md", "README.md"
-      FileUtils.mv "POD_LICENSE", "LICENSE"
       FileUtils.mv "NAME.podspec", "#{pod_name}.podspec"
     end
 
@@ -240,6 +238,10 @@ module Pod
 
     def date
       Time.now.strftime "%m/%d/%Y"
+    end
+
+    def date_horizontal
+      Time.now.strftime "%Y-%m-%d"
     end
 
     def podfile_path
