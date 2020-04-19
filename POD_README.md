@@ -1,7 +1,7 @@
 # ${POD_NAME}
 
-[![Version](https://img.shields.io/badge/version-0.0.1-green.svg?style=flat)](EsbuilderMpLibsBase.podspec)
-[![Platform](https://img.shields.io/badge/platform-iOS 8.0+-green.svg?style=flat)](EsbuilderMpLibsBase.podspec)
+![Version](https://img.shields.io/badge/version-0.0.1-green.svg?style=flat)  
+![Platform](https://img.shields.io/badge/platform-iOS 8.0+-green.svg?style=flat)
 
 
 ## Example
