@@ -34,7 +34,7 @@ TODO: Add long description of the pod here.
       'OTHER_LDFLAGS' => '-lObjC'
   }
 
-  s.source_files = '${POD_NAME}/Classes/**/*.{h,m,mm}'
+  s.source_files = '${POD_NAME}/Classes/{Public, Private}/**/*.{h,m,mm}'
   s.public_header_files = '${POD_NAME}/Classes/Public/**/*.h'
   
   # s.resource_bundles = {
