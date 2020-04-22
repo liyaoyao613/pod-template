@@ -60,7 +60,7 @@ module Pod
       File.open("NAME.podspec", "w") { |file| file.puts text }
 
       # remove podspec for osx
-      `rm ./NAME-osx.podspec`
+      # `rm ./NAME-osx.podspec`
     end
   end
 

@@ -115,6 +115,9 @@ RUBY
         end
       end
 
+      File.rename(pod_public_h_path, pod_public_folder + "/#{@configurator.pod_name}.h")
+
+
     end
 
     def rename_project_folder
@@ -124,7 +127,9 @@ RUBY
     end
 
     def replace_internal_project_settings
-      Dir.glob(project_folder + "/**/**/**/**").each do |name|
+      paths = Dir.glob(project_folder + "/**/**/**/**")
+      paths << pod_public_h_path
+      paths.each do |name|
         next if Dir.exists? name
         text = File.read(name)
 
@@ -134,6 +139,14 @@ RUBY
 
         File.open(name, "w") { |file| file.puts text }
       end
+    end
+
+    def pod_public_h_path
+      pod_public_folder + '/Public.h'
+    end
+
+    def pod_public_folder
+      'Pod/Classes/Public'
     end
 
   end

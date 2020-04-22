@@ -17,15 +17,18 @@ TODO: Add long description of the pod here.
   s.static_framework = true
   s.pod_target_xcconfig = {
       'DEAD_CODE_STRIPPING' => 'NO',
-      'LINK_WITH_STANDARD_LIBRARIES' => 'NO',
-      'OTHER_LDFLAGS' => '-lObjC'
+      'LINK_WITH_STANDARD_LIBRARIES' => 'NO'
   }
 
-  s.source_files = '${POD_NAME}/Classes/{Public, Private}/**/*.{h,m,mm}'
+  s.user_target_xcconfig = {
+    'OTHER_LDFLAGS' => ['-ObjC'],
+}
+
+  s.source_files = '${POD_NAME}/Classes/**/*.{h,m,mm}'
   s.public_header_files = '${POD_NAME}/Classes/Public/**/*.h'
-  
+
   # s.resource_bundles = {
-  #   '${POD_NAME}' => ['${POD_NAME}/Assets/*.png']
+  #   'EsbuilderMpxxxx' => ['EsbuilderMpxxxx/Assets/*.png']
   # }
 
   # s.frameworks = 'UIKit', 'MapKit'
