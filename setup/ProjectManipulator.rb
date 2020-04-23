@@ -23,7 +23,9 @@ module Pod
         "TODAYS_DATE" => @configurator.date,
         "TODAYS_YEAR" => @configurator.year,
         "PROJECT" => @configurator.pod_name,
-        "CPD" => @prefix
+        "CPD" => @prefix,
+        "USER_NAME" => user_name,
+        "USER_EMAIL" => user_email
       }
       replace_internal_project_settings
 
@@ -40,8 +42,16 @@ module Pod
       project_metadata_item = @project.root_object.main_group.children.select { |group| group.name == "Podspec Metadata" }.first
       project_metadata_item.new_file "../" + @configurator.pod_name  + ".podspec"
       project_metadata_item.new_file "../README.md"
-      project_metadata_item.new_file "../ReleaseNotes.txt"
+      project_metadata_item.new_file "../ReleaseNotes.md"
+
+      puts "project_metadata_item = #{project_metadata_item}" 
+
+      # 将git podspec 加到项目中
+      project_metadata_item = @project.root_object.main_group.children.select { |group| group.name == "Example for #{@configurator.pod_name}" }.first
+      project_metadata_item.new_file "./" + @configurator.pod_name  + ".podspec"
     end
+
+
 
     def remove_demo_project
       app_project = @project.native_targets.find { |target| target.product_type == "com.apple.product-type.application" }
@@ -106,7 +116,7 @@ RUBY
         end
 
         # rename project related files
-        ["PROJECT-Info.plist", "PROJECT-Prefix.pch", "PROJECT.entitlements"].each do |file|
+        ["PROJECT-Info.plist", "PROJECT-Prefix.pch", "PROJECT.entitlements", "PROJECT.podspec"].each do |file|
           before = project_folder + "/PROJECT/" + file
           next unless File.exists? before
 
@@ -114,6 +124,8 @@ RUBY
           File.rename before, after
         end
       end
+
+
 
       File.rename(pod_public_h_path, pod_public_folder + "/#{@configurator.pod_name}.h")
 
@@ -147,6 +159,22 @@ RUBY
 
     def pod_public_folder
       'Pod/Classes/Public'
+    end
+    
+    #------------------------------------#
+
+    def user_name
+      (ENV['GIT_COMMITTER_NAME'] || github_user_name || `git config user.name` || `<GITHUB_USERNAME>` ).strip
+    end
+
+    def github_user_name
+      github_user_name = `security find-internet-password -s github.com | grep acct | sed 's/"acct"<blob>="//g' | sed 's/"//g'`.strip
+      is_valid = github_user_name.empty? or github_user_name.include? '@'
+      return is_valid ? nil : github_user_name
+    end
+
+    def user_email
+      (ENV['GIT_COMMITTER_EMAIL'] || `git config user.email`).strip
     end
 
   end

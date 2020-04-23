@@ -146,7 +146,7 @@ module Pod
     end
 
     def replace_variables_in_files
-      file_names = ['POD_README.md', 'ReleaseNotes.txt', 'NAME.podspec', '.travis.yml', podfile_path]
+      file_names = ['POD_README.md', 'ReleaseNotes.md', 'NAME.podspec', '.travis.yml', podfile_path]
       file_names.each do |file_name|
         text = File.read(file_name)
         text.gsub!("${POD_NAME}", @pod_name)
@@ -231,6 +231,8 @@ module Pod
     def user_email
       (ENV['GIT_COMMITTER_EMAIL'] || `git config user.email`).strip
     end
+
+    #-----------------------------------------#
 
     def year
       Time.now.year.to_s

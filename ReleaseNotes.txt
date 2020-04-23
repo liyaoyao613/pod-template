@@ -1,6 +1,0 @@
-
-更新日志
-
-${DATE_HORIZONTAL}  version: 0.1.0
-创建 ${POD_NAME}
-
